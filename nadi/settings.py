@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'recipe',
     'healthy_advice',
     'sleep',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
