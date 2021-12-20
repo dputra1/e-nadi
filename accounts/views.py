@@ -7,6 +7,13 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
+import json
+from os import error
+from django.http import response
+from django.http.response import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework import status
+
 
 # Create your views here.
 from .models import *
@@ -16,6 +23,8 @@ from home.views import index as welcome
 
 # workout
 from workout.models import Exercise
+
+from sleep.models import Sleep
 
 def registerPage(request):
 	if request.user.is_authenticated:
@@ -29,6 +38,9 @@ def registerPage(request):
 				username = form.cleaned_data.get('username')
 				messages.success(request, 'Account was created for ' + username)
 				Exercise.objects.create(
+					user=user,
+				)
+				Sleep.objects.create(
 					user=user,
 				)
 
@@ -59,10 +71,22 @@ def loginPage(request):
 
 def logoutUser(request):
 	logout(request)
-	return redirect('login')
+	return redirect(welcome)
 
 def home(request):
-	if request.user.is_authenticated:
-		return redirect(welcome)
+	return redirect(welcome)
+
+@csrf_exempt
+def login_flutter(request):
+	data = json.loads(request.body)
+	username = data["username"]
+	password = data["password"]
+	print(f"{username} \n{password}")
+
+	user = authenticate(username=username, password=password)
+	if user is not None:
+		# print("Hore")
+		return JsonResponse(data, status=status.HTTP_201_CREATED)
 	else:
-		return redirect('login')
+		# print("Sad")
+		return JsonResponse(error, status=status.HTTP_400_BAD_REQUEST)
