@@ -74,3 +74,4 @@ def get_all_article(request):
     all_article = HealthyArticle.objects.all()
     data = serializers.serialize('json', all_article)
     return HttpResponse(data, content_type="application/json")
+    
