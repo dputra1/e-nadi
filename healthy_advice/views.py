@@ -47,10 +47,9 @@ def delete_comment(request, id):
     if request.method == "POST":
         # delete object
         obj.delete()
-        
-    data = serializers.serialize('json', CommentHealthy.objects.all())
+        return JsonResponse({"status": "success"}, status=200)
 
-    return HttpResponse(data, content_type='application/json')
+    return JsonResponse({"error": "Delete Failed"}, status=400)
     
 @csrf_exempt
 def edit_comment(request, id):
@@ -79,8 +78,8 @@ def get_all_article(request):
 
 @csrf_exempt
 def post_comment_api(request):
-    if not request.user.is_authenticated:
-        return JsonResponse({"error": "Add Failed"}, status=400)
+    # if not request.user.is_authenticated:
+    #     return JsonResponse({"error": "Add Failed"}, status=400)
 
     if request.method == 'POST':
 
@@ -89,7 +88,7 @@ def post_comment_api(request):
         # commentator_name = data["commentator_name"]
         comment_field = data["comment_field"]
 
-        comment_healthy = CommentHealthy(commentator_name=request.user, comment_field=comment_field)
+        comment_healthy = CommentHealthy(commentator_name=data["commentator_name"], comment_field=comment_field)
 
         comment_healthy.save()
 
@@ -97,3 +96,22 @@ def post_comment_api(request):
     
     else:
         return JsonResponse({"status": "error"}, status=401)
+
+@csrf_exempt
+def edit_comment_api(request, id):
+    obj = get_object_or_404(CommentHealthy, id = id)
+
+    if request.user != obj.commentator_name:
+        return JsonResponse({"error": "Edit Failed"}, status=400)
+
+    if request.method == "POST":
+        data = json.loads(request.body)
+        new_comment_field = data["comment_field"]
+
+        obj.commentator_name = request.user
+        obj.comment_field = new_comment_field
+       
+        obj.save()
+        return JsonResponse({"status": "success"}, status=200)
+    
+    return JsonResponse({"error": "Internal Server Error"}, status=500)
