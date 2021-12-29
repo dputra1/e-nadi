@@ -101,15 +101,19 @@ def login_flutter(request):
         }, status=401)
 
 @csrf_exempt
-def registerFlutter(request):
+def register_flutter(request):
     if request.method == 'POST':
         data = json.loads(request.body)
 
+        firstname = data["first_name"]
+        lastname = data["last_name"]
         username = data["username"]
         email = data["email"]
         password1 = data["password1"]
 
         newUser = UserModel.objects.create_user(
+        first_name = firstname,
+        last_name = lastname,
         username = username, 
         email = email,
         password = password1,
@@ -119,3 +123,17 @@ def registerFlutter(request):
         return JsonResponse({"status": "success"}, status=200)
     else:
         return JsonResponse({"status": "error"}, status=401)
+
+@csrf_exempt
+def logout_flutter(request):
+    try:
+        logout(request)
+        return JsonResponse({
+                    "status": True,
+                    "message": "Successfully Logged out!"
+                }, status=200)
+    except:
+        return JsonResponse({
+          "status": False,
+          "message": "Failed to Logout"
+        }, status=401)
