@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, redirect
+from django.shortcuts import render
 from django.http import response
 from django.http.response import HttpResponseRedirect,  HttpResponse, JsonResponse
 from healthy_advice.models import CommentHealthy, HealthyArticle
@@ -6,6 +7,11 @@ from healthy_advice.forms import NoteForm
 from django.http import HttpResponse, JsonResponse
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, UserModel
+from django.contrib.auth import authenticate, login, logout
+
 import json
 
 # from healthy_advice.models import Rating
@@ -78,41 +84,38 @@ def get_all_article(request):
 
 @csrf_exempt
 def post_comment_api(request):
-    # if not request.user.is_authenticated:
-    #     return JsonResponse({"error": "Add Failed"}, status=400)
+    # print(request.username)
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Post Failed"}, status=400)
 
     if request.method == 'POST':
 
         data = json.loads(request.body)
 
-        # commentator_name = data["commentator_name"]
         comment_field = data["comment_field"]
 
-        comment_healthy = CommentHealthy(commentator_name=data["commentator_name"], comment_field=comment_field)
+        comment_healthy = CommentHealthy(commentator_name= data["commentator_name"], comment_field=comment_field)
 
         comment_healthy.save()
 
         return JsonResponse({"status": "success"}, status=200)
     
     else:
-        return JsonResponse({"status": "error"}, status=401)
+        return JsonResponse({"status": "error"}, status=400)
 
 @csrf_exempt
 def edit_comment_api(request, id):
     obj = get_object_or_404(CommentHealthy, id = id)
 
-    # if request.user != obj.commentator_name:
-    #     return JsonResponse({"error": "Edit Failed"}, status=400)
-
+  
     if request.method == "POST":
         data = json.loads(request.body)
         new_comment_field = data["comment_field"]
-
-        # obj.commentator_name = request.user
-        
         obj.comment_field = new_comment_field
-       
+        print ("mamaa "+new_comment_field)
+
         obj.save()
         return JsonResponse({"status": "success"}, status=200)
     
-    return JsonResponse({"error": "Internal Server Error"}, status=500)
+    
+    return JsonResponse({"error": "Edit Failed"}, status=400)
