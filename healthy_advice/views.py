@@ -101,14 +101,15 @@ def post_comment_api(request):
 def edit_comment_api(request, id):
     obj = get_object_or_404(CommentHealthy, id = id)
 
-    if request.user != obj.commentator_name:
-        return JsonResponse({"error": "Edit Failed"}, status=400)
+    # if request.user != obj.commentator_name:
+    #     return JsonResponse({"error": "Edit Failed"}, status=400)
 
     if request.method == "POST":
         data = json.loads(request.body)
         new_comment_field = data["comment_field"]
 
-        obj.commentator_name = request.user
+        # obj.commentator_name = request.user
+        
         obj.comment_field = new_comment_field
        
         obj.save()
