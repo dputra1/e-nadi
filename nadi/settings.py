@@ -50,6 +50,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -62,10 +63,10 @@ MIDDLEWARE = [
 
 
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:19236",
-#     "http://localhost:8000",
-# ]
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:19236",
+    "http://localhost:8000",
+]
 
 CORS_ALLOW_METHODS = [
     'GET',
@@ -75,10 +76,11 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS=True
 
-CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SAMESITE = 'None'
+CORS_ALLOW_HEADERS = ["*"]
 
 ROOT_URLCONF = 'nadi.urls'
 

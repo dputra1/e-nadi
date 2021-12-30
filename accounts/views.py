@@ -12,6 +12,7 @@ from os import error
 from django.http import response
 from django.http.response import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 # Create your views here.
 from .models import *
